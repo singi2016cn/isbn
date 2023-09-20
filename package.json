@@ -1,0 +1,27 @@
+{
+  "name": "isbn",
+  "version": "1.0.0",
+  "description": "parse,verify isbn",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "jest test/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitee.com/singi/isbn.git"
+  },
+  "keywords": [
+    "isbn"
+  ],
+  "author": "singi",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "jest": "^29.7.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.22.20",
+    "@babel/preset-env": "^7.22.20",
+    "babel-jest": "^29.7.0"
+  }
+}
