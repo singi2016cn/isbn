@@ -38,6 +38,14 @@ test('9787550247345 parse 978-7-5502-4734-5', () => {
   expect((new isbn('9787550247345')).parseCurrentVersionWithSeparator()).toBe('978-7-5502-4734-5');
 });
 
+test('7309045475 parse 7-309-04547-5', () => {
+  expect((new isbn('7309045475')).parseWithSeparator()).toBe('7-309-04547-5');
+});
+
 test('7309045475 is valid', () => {
   expect((new isbn('7309045475')).isValid()).toBe(true);
+});
+
+test('publish name of 9787550247345 is 北京联合出版公司', () => {
+  expect((new isbn('9787550247345')).publishName()).toBe('北京联合出版公司');
 });
