@@ -1,7 +1,7 @@
 {
-  "name": "isbn",
+  "name": "international-standard-book-number",
   "version": "1.0.0",
-  "description": "parse,verify isbn",
+  "description": "verify,parse,fake isbn",
   "main": "index.js",
   "type": "module",
   "scripts": {

@@ -10,7 +10,7 @@
 ## 安装
 
 ```
-npm i singi/isbn
+npm i international-standard-book-number
 ```
 
 ## 简单用法
