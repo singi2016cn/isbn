@@ -367,7 +367,7 @@ class InternationalStandardBookNumber {
   parsePublishCode(waitParseIsbn) {
     let publishCode = null;
     const publishCodeRegexs = [
-      /^0[0-9]/,
+      /^0[0-9]/g,
       /^[1-4][0-9][0-9]/g,
       /^[5-7][0-9][0-9][0-9]/g,
       /^8[0-9][0-9][0-9][0-9]/g,
