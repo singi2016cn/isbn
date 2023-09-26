@@ -1,4 +1,5 @@
 import publish from "./publish.js";
+import common from './util/common.js'
 
 const OLD_VERSION_LENGTH = 10;
 const CURRENT_VERSION_LENGTH = 13;
@@ -8,9 +9,23 @@ const PRIFIX_CODE_979 = 979;
 
 const SEPARATOR = "-";
 
+const GROUP_CODE = '7'
+
+const PUBLISH_BOOK_LENGTH = 8
+
 class InternationalStandardBookNumber {
-  constructor(isbn) {
+  constructor(isbn = '') {
     this.isbn = isbn;
+  }
+
+  /**
+   * 设置isbn
+   * @date 2023/9/26 - 17:14:36
+   *
+   * @param {*} isbn
+   */
+  setIsbn(isbn){
+    this.isbn = isbn
   }
 
   /**
@@ -247,9 +262,7 @@ class InternationalStandardBookNumber {
   parseOldVersion() {
     const isbn = this.isbn;
 
-    const { groupCode, publishCode, bookCode } = this.parseGroupPublishBookCode(
-      isbn.slice(0, -1)
-    );
+    const { groupCode, publishCode, bookCode } = this.parseGroupPublishBookCode(isbn.slice(0, -1));
     const checkCode = isbn.slice(-1);
 
     return {
@@ -268,8 +281,7 @@ class InternationalStandardBookNumber {
    * @returns {string}
    */
   parseOldVersionWithSeparator(separator = SEPARATOR) {
-    const { groupCode, publishCode, bookCode, checkCode } =
-      this.parseCurrentVersion();
+    const { groupCode, publishCode, bookCode, checkCode } = this.parseCurrentVersion();
     return `${groupCode}${separator}${publishCode}${separator}${bookCode}${separator}${checkCode}${separator}`;
   }
 
@@ -282,9 +294,7 @@ class InternationalStandardBookNumber {
   parseCurrentVersion() {
     const isbn = this.isbn;
     const prefixCode = isbn.slice(0, 3);
-    const { groupCode, publishCode, bookCode } = this.parseGroupPublishBookCode(
-      isbn.slice(3, -1)
-    );
+    const { groupCode, publishCode, bookCode } = this.parseGroupPublishBookCode(isbn.slice(3, -1));
     const checkCode = isbn.slice(-1);
 
     return {
@@ -304,8 +314,7 @@ class InternationalStandardBookNumber {
    * @returns {string}
    */
   parseCurrentVersionWithSeparator(separator = SEPARATOR) {
-    const { prefixCode, groupCode, publishCode, bookCode, checkCode } =
-      this.parseCurrentVersion();
+    const { prefixCode, groupCode, publishCode, bookCode, checkCode } = this.parseCurrentVersion();
     return `${prefixCode}${separator}${groupCode}${separator}${publishCode}${separator}${bookCode}${separator}${checkCode}`;
   }
 
@@ -394,9 +403,137 @@ class InternationalStandardBookNumber {
    * @returns {*}
    */
   publishName() {
-    const { prefixCode, groupCode, publishCode, bookCode, checkCode } =
-      this.parse();
+    const { prefixCode, groupCode, publishCode, bookCode, checkCode } = this.parse();
     return publish.get(publishCode);
+  }
+
+  /**
+   * 生成ISBN
+   * @date 2023/9/26 - 17:13:49
+   *
+   * @returns {{ prefixCode: any; groupCode: string; publishCode: any; bookCode: any; checkCode: string; }}
+   */
+  fake(){
+    let prefixCode = common.arrayRandom([0, 1])
+    if (prefixCode === 0) {
+      return this.fakeOldVersion()
+    } else {
+      return this.fakeCurrentVersion()
+    }
+  }
+
+  /**
+   * 生成旧的版本的ISBN
+   * @date 2023/9/26 - 17:20:18
+   *
+   * @returns {this}
+   */
+  fakeOldVersion(){
+    const prefixCode = ''
+
+    const groupCode = GROUP_CODE
+    
+    const publishCode = this.fakePublishCode()
+    
+    const bookCodeLength = PUBLISH_BOOK_LENGTH - publishCode.length
+    const bookCode = this.fakeBookCode(bookCodeLength)
+    
+    const waitParseIsbn = prefixCode + groupCode + publishCode + bookCode
+    const checkCode = this.oldVersionCheckCode(waitParseIsbn)
+    
+    this.setIsbn(waitParseIsbn + checkCode)
+
+    return this
+  }
+
+  /**
+   * 生成当前版本的ISBN
+   * @date 2023/9/26 - 17:20:18
+   *
+   * @returns {this}
+   */
+  fakeCurrentVersion(){
+    const prefixCode = common.arrayRandom([PRIFIX_CODE_978, PRIFIX_CODE_979])
+
+    const groupCode = GROUP_CODE
+    
+    const publishCode = this.fakePublishCode()
+    
+    const bookCodeLength = PUBLISH_BOOK_LENGTH - publishCode.length
+    const bookCode = this.fakeBookCode(bookCodeLength)
+    
+    const waitParseIsbn = prefixCode + groupCode + publishCode + bookCode
+    const checkCode = this.currentVersionCheckCode(waitParseIsbn)
+    
+    this.setIsbn(waitParseIsbn + checkCode)
+
+    return this
+  }
+
+  /**
+   * 生成出版社号
+   * @date 2023/9/26 - 16:57:31
+   *
+   * @returns {*}
+   */
+  fakePublishCode(){
+    // 获取随机规则
+    const randomIndex = common.numberRandom(0, 4)
+    // /^0[0-9]/g
+    let arrayRandomRangeRule = [
+      { start: 0, end:0},
+      { start: 0, end:9}
+    ]
+    if (randomIndex === 1) {
+      // /^[1-4][0-9][0-9]/g
+      arrayRandomRangeRule = [
+        { start: 1, end:4},
+        { start: 0, end:9},
+        { start: 0, end:9}
+      ]
+    } else if (randomIndex === 2) {
+      // /^[5-7][0-9][0-9][0-9]/g
+      arrayRandomRangeRule = [
+        { start: 5, end:7},
+        { start: 0, end:9},
+        { start: 0, end:9},
+        { start: 0, end:9}
+      ]
+    } else if (randomIndex === 3) {
+      // /^8[0-9][0-9][0-9][0-9]/g
+      arrayRandomRangeRule = [
+        { start: 8, end:8},
+        { start: 0, end:9},
+        { start: 0, end:9},
+        { start: 0, end:9}
+      ]
+    } else if (randomIndex === 4) {
+      // /^9[0-9][0-9][0-9][0-9][0-9]/g
+      arrayRandomRangeRule = [
+        { start: 9, end:9},
+        { start: 0, end:9},
+        { start: 0, end:9},
+        { start: 0, end:9},
+        { start: 0, end:9}
+      ]
+    }
+
+    return common.arrayRandomRange(arrayRandomRangeRule)
+  }
+
+  /**
+   * 生成书号
+   * @date 2023/9/26 - 17:01:14
+   *
+   * @param {*} length
+   * @returns {*}
+   */
+  fakeBookCode(length){
+    const arrayRandomRangeRule = []
+    for(let i = 0; i < length; i++) {
+      arrayRandomRangeRule.push({start: 0, end:9})
+    }
+    return common.arrayRandomRange(arrayRandomRangeRule)
   }
 }
 

@@ -1,6 +1,3 @@
-import isbn from "./src/isbn.js"
+// import Isbn from "./src/isbn.js"
 
-const res = isbn.isCurrentVersion('9788721304621')
-console.log(res)
-
-// export default isbn
+// const isbn = new Isbn()

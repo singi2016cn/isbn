@@ -1,4 +1,5 @@
 import isbn from '../src/isbn.js';
+import common from '../util/common.js'
 
 test('8721304621 is old version', () => {
   expect((new isbn('8721304621')).isOldVersion()).toBe(true);
@@ -18,6 +19,10 @@ test('9788721304621 is current valid', () => {
 
 test('7302122601 to new is 9787302122609', () => {
   expect((new isbn('7302122601')).oldToCurrentVersion()).toBe('9787302122609');
+});
+
+test('7302122601 to new is 9797302122608', () => {
+  expect((new isbn('7302122601')).oldToCurrentVersion('979')).toBe('9797302122608');
 });
 
 test('9787302122609 to old is 7302122601', () => {
