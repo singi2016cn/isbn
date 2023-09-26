@@ -1,5 +1,5 @@
 import isbn from '../src/isbn.js';
-import common from '../util/common.js'
+import common from '../src/util/common.js'
 
 test('8721304621 is old version', () => {
   expect((new isbn('8721304621')).isOldVersion()).toBe(true);
@@ -51,6 +51,6 @@ test('7309045475 is valid', () => {
   expect((new isbn('7309045475')).isValid()).toBe(true);
 });
 
-test('publish name of 9787550247345 is 北京联合出版公司', () => {
-  expect((new isbn('9787550247345')).publishName()).toBe('北京联合出版公司');
+test('publish name of 9787559602176 is 北京联合出版公司', () => {
+  expect((new isbn('9787559602176')).publishName()).toBe('北京联合出版公司');
 });
