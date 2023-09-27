@@ -15,7 +15,7 @@ npm i international-standard-book-number
 
 ## 简单用法
 ```js
-import Isbn from "isbn"
+import Isbn from "international-standard-book-number"
 
 try {
   const isbn = new Isbn('9787559602176')
@@ -53,7 +53,7 @@ try {
 ## 生成数据
 
 ```javascript
-import Isbn from "isbn"
+import Isbn from "international-standard-book-number"
 
 const isbn = new Isbn()
 
