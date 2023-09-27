@@ -1,3 +1,3 @@
-// import Isbn from "./src/isbn.js"
+import Isbn from "./src/isbn.js";
 
-// const isbn = new Isbn()
+export default Isbn

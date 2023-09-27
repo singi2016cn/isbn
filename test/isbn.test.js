@@ -1,20 +1,32 @@
 import isbn from '../src/isbn.js';
 import common from '../src/util/common.js'
 
-test('8721304621 is old version', () => {
-  expect((new isbn('8721304621')).isOldVersion()).toBe(true);
+test('978-7-5502-4734-5 is valid', () => {
+  expect((new isbn('978-7-5502-4734-5')).isValid()).toBe(true);
 });
 
-test('9788721304621 is current version', () => {
-  expect((new isbn('9788721304621')).isCurrentVersion()).toBe(true);
+test('978 7 5502 4734 5 is valid', () => {
+  expect((new isbn('978 7 5502 4734 5')).isValid()).toBe(true);
 });
 
-test('7309045475 is old valid', () => {
-  expect((new isbn('7309045475')).isValidOldVersion()).toBe(true);
+test('978-7 5502,4734.5 is valid', () => {
+  expect((new isbn('978-7 5502,4734.5')).isValid()).toBe(true);
 });
 
-test('9788721304621 is current valid', () => {
-  expect((new isbn('9788721304621')).isValidCurrentVersion()).toBe(true);
+test('8721304621 is valid', () => {
+  expect((new isbn('8721304621')).isValid()).toBe(false);
+});
+
+test('9788721304621 is valid', () => {
+  expect((new isbn('9788721304621')).isValid()).toBe(true);
+});
+
+test('7309045475 is valid', () => {
+  expect((new isbn('7309045475')).isValid()).toBe(true);
+});
+
+test('9788721304621 is valid', () => {
+  expect((new isbn('9788721304621')).isValid()).toBe(true);
 });
 
 test('7302122601 to new is 9787302122609', () => {
@@ -22,7 +34,7 @@ test('7302122601 to new is 9787302122609', () => {
 });
 
 test('7302122601 to new is 9797302122608', () => {
-  expect((new isbn('7302122601')).oldToCurrentVersion('979')).toBe('9797302122608');
+  expect((new isbn('7302122601')).oldToCurrentVersion(isbn.prefixCode979)).toBe('9797302122608');
 });
 
 test('9787302122609 to old is 7302122601', () => {
@@ -30,7 +42,7 @@ test('9787302122609 to old is 7302122601', () => {
 });
 
 test('9787550247345 parse', () => {
-  expect((new isbn('9787550247345')).parseCurrentVersion()).toEqual({
+  expect((new isbn('9787550247345')).parse()).toEqual({
     prefixCode: '978',
     groupCode: '7',
     publishCode: '5502',
@@ -40,7 +52,7 @@ test('9787550247345 parse', () => {
 });
 
 test('9787550247345 parse 978-7-5502-4734-5', () => {
-  expect((new isbn('9787550247345')).parseCurrentVersionWithSeparator()).toBe('978-7-5502-4734-5');
+  expect((new isbn('9787550247345')).parseWithSeparator()).toBe('978-7-5502-4734-5');
 });
 
 test('7309045475 parse 7-309-04547-5', () => {

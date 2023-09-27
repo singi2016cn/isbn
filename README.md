@@ -17,32 +17,36 @@ npm i international-standard-book-number
 ```js
 import Isbn from "isbn"
 
-const isbn = new Isbn('9787559602176')
+try {
+  const isbn = new Isbn('9787559602176')
 
-// 格式是否合法
-const isValid = isbn.isValid()
-console.log(isValid) // true
+  // 格式是否合法
+  const isValid = isbn.isValid()
+  console.log(isValid) // true
 
-// 获取分隔符的格式
-const isbnSeparator = isbn.parseWithSeparator()
-console.log(isbnSeparator) // 978-7-5596-0217-6
+  // 获取分隔符的格式
+  const isbnSeparator = isbn.parseWithSeparator()
+  console.log(isbnSeparator) // 978-7-5596-0217-6
 
-// 获取各部分
-const isbnParts = isbn.parse()
-console.log(isbnParts)
-/* 
-{
-  prefixCode: '978',
-  groupCode: '7',
-  publishCode: '5596',
-  bookCode: '0217',
-  checkCode: '6'
+  // 获取各部分
+  const isbnParts = isbn.parse()
+  console.log(isbnParts)
+  /* 
+  {
+    prefixCode: '978',
+    groupCode: '7',
+    publishCode: '5596',
+    bookCode: '0217',
+    checkCode: '6'
+  }
+  */
+
+  // 获取出版社名称
+  const publishName = isbn.publishName()
+  console.log(publishName) // 北京联合出版公司
+} catch (e) {
+  console.log(e.message)
 }
-*/
-
-// 获取出版社名称
-const publishName = isbn.publishName()
-console.log(publishName) // 北京联合出版公司
 ```
 
 
