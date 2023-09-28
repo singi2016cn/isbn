@@ -3,21 +3,68 @@ import common from './util/common.js'
 
 class InternationalStandardBookNumber {
   // 旧版本长度
-  static oldVersionLength = 10
+  static OLD_VERSION_LENGTH = 10
   // 当前版本长度
-  static currentVersionLength = 13
+  static CURRENT_VERSION_LENGTH = 13
   // 出版社和书号的长度
-  static publicBookLength = 8
+  static PUBLISH_BOOK_LENGTH = 8
   // 前缀
-  static prefixCode978 = '978'
-  static prefixCode979 = '979'
+  static PRIFIX_CODE_978 = '978'
+  static PRIFIX_CODE_979 = '979'
   // 默认分隔符
-  static separator = '-'
+  static SEPARATOR = '-'
   // 中国的组号
-  static groupCode = '7'
+  static GROUP_CODE = '7'
 
-  constructor(isbn = '') {
-    this.isbn = this.#format(isbn);
+  #isbn = null
+  #isbnInput = null
+
+  #prefixCode = null
+  #groupCode = null
+  #publishCode = null
+  #bookCode = null
+  #checkCode = null
+
+  #isValid = false
+
+  constructor(isbn = null) {
+    if (isbn !== null) {
+      this.#isbnInput = isbn
+      this.#isbn = this.#format(isbn)
+      this.#init()
+    }
+  }
+
+  /**
+   * 初始化
+   * @date 2023/9/28 - 12:00:03
+   */
+  #init(){
+    this.#verify()
+
+    if (this.#isValid) {
+      const { prefixCode, groupCode, publishCode, bookCode, checkCode } = this.#handle();
+      this.#prefixCode = prefixCode
+      this.#groupCode = groupCode
+      this.#publishCode = publishCode
+      this.#bookCode = bookCode
+      this.#checkCode = checkCode
+    }
+  }
+
+  /**
+   * 检查格式
+   * @date 2023/9/28 - 14:03:08
+   *
+   */
+  #verify(){
+    if (this.#isOldVersion()) {
+      this.#isValid = this.#isValidOldVersion();
+    } else if(this.#isCurrentVersion()) {
+      this.#isValid = this.#isValidCurrentVersion();
+    } else {
+      this.#isValid = false
+    }
   }
 
   /**
@@ -27,13 +74,7 @@ class InternationalStandardBookNumber {
    * @returns {boolean}
    */
   isValid() {
-    if (this.#isOldVersion()) {
-      return this.#isValidOldVersion();
-    } else if(this.#isCurrentVersion()) {
-      return this.#isValidCurrentVersion();
-    } else {
-      throw new Error('isbn invalid')
-    }
+    return this.#isValid
   }
 
   /**
@@ -42,15 +83,29 @@ class InternationalStandardBookNumber {
    *
    * @returns {{ prefixCode: any; groupCode: any; publishCode: any; bookCode: any; checkCode: any; }}
    */
-  parse() {
+  #handle() {
     if (this.#isOldVersion()) {
       const prefixCode = null;
       const { groupCode, publishCode, bookCode, checkCode } = this.#parseOldVersion();
       return { prefixCode, groupCode, publishCode, bookCode, checkCode };
     } else if (this.#isCurrentVersion()) {
       return this.#parseCurrentVersion();
-    } else {
-      throw new Error('isbn invalid')
+    }
+  }
+
+  /**
+   * 解析ISBN为5部分：前缀，组号（国家、地区、语言的代号），出版者号，书序号和检验码
+   * @date 2023/9/28 - 14:11:51
+   *
+   * @returns {{ prefixCode: any; groupCode: any; publishCode: any; bookCode: any; checkCode: any; }}
+   */
+  parse(){
+    return {
+      prefixCode: this.#prefixCode,
+      groupCode: this.#groupCode,
+      publishCode: this.#publishCode,
+      bookCode: this.#bookCode,
+      checkCode: this.#checkCode,
     }
   }
 
@@ -58,26 +113,25 @@ class InternationalStandardBookNumber {
    * 解析为有分隔符的形式
    * @date 2023/9/20 - 09:40:56
    *
-   * @param {string} [separator=InternationalStandardBookNumber.separator]
+   * @param {string} [separator=InternationalStandardBookNumber.SEPARATOR]
    * @returns {string}
    */
-  parseWithSeparator(separator = InternationalStandardBookNumber.separator) {
-    const { prefixCode, groupCode, publishCode, bookCode, checkCode } = this.parse();
+  parseWithSeparator(separator = InternationalStandardBookNumber.SEPARATOR) {
     const res = [];
-    if (prefixCode !== null) {
-      res.push(prefixCode);
+    if (this.#prefixCode !== null) {
+      res.push(this.#prefixCode);
     }
-    if (groupCode !== null) {
-      res.push(groupCode);
+    if (this.#groupCode !== null) {
+      res.push(this.#groupCode);
     }
-    if (publishCode !== null) {
-      res.push(publishCode);
+    if (this.#publishCode !== null) {
+      res.push(this.#publishCode);
     }
-    if (bookCode !== null) {
-      res.push(bookCode);
+    if (this.#bookCode !== null) {
+      res.push(this.#bookCode);
     }
-    if (checkCode !== null) {
-      res.push(checkCode);
+    if (this.#checkCode !== null) {
+      res.push(this.#checkCode);
     }
     return res.join(separator);
   }
@@ -86,11 +140,11 @@ class InternationalStandardBookNumber {
    * 旧格式转当前格式
    * @date 2023/9/19 - 14:44:41
    *
-   * @param {number} [prefixCode=InternationalStandardBookNumber.prefixCode978]
+   * @param {number} [prefixCode=InternationalStandardBookNumber.PRIFIX_CODE_978]
    * @returns {string}
    */
-  oldToCurrentVersion(prefixCode = InternationalStandardBookNumber.prefixCode978) {
-    const isbn = this.isbn;
+  oldToCurrentVersion(prefixCode = InternationalStandardBookNumber.PRIFIX_CODE_978) {
+    const isbn = this.#isbn;
     // 去掉校验位
     const isbnWithoutCheckCode = isbn.slice(0, -1);
     // 加上前缀
@@ -107,7 +161,7 @@ class InternationalStandardBookNumber {
    * @returns {string}
    */
   currentToOldVersion() {
-    const isbn = this.isbn;
+    const isbn = this.#isbn;
     // 去掉前缀和校验位
     const isbnWaitCheck = isbn.slice(3, -1);
     // 检验值
@@ -122,8 +176,7 @@ class InternationalStandardBookNumber {
    * @returns {*}
    */
   publishName() {
-    const { prefixCode, groupCode, publishCode, bookCode, checkCode } = this.parse();
-    return publish.get(publishCode);
+    return publish.get(this.#publishCode);
   }
 
   #format(isbn){
@@ -137,7 +190,7 @@ class InternationalStandardBookNumber {
    * @returns {boolean}
    */
   #isOldVersion() {
-    return this.isbn.length === InternationalStandardBookNumber.oldVersionLength;
+    return this.#isbn.length === InternationalStandardBookNumber.OLD_VERSION_LENGTH;
   }
 
   /**
@@ -147,7 +200,7 @@ class InternationalStandardBookNumber {
    * @returns {boolean}
    */
   #isCurrentVersion() {
-    return this.isbn.length === InternationalStandardBookNumber.currentVersionLength;
+    return this.#isbn.length === InternationalStandardBookNumber.CURRENT_VERSION_LENGTH;
   }
 
   /**
@@ -157,7 +210,7 @@ class InternationalStandardBookNumber {
    * @returns {boolean}
    */
   #isValidOldVersion() {
-    const isbn = this.isbn;
+    const isbn = this.#isbn;
     // 校验值
     const isbnCheckCode = isbn.slice(-1);
     // 计算的检验值
@@ -214,7 +267,7 @@ class InternationalStandardBookNumber {
    * @returns {boolean}
    */
   #isValidCurrentVersion() {
-    const isbn = this.isbn;
+    const isbn = this.#isbn;
     // 校验值
     const isbnCheckCode = isbn.slice(-1);
     // 计算的检验值
@@ -271,7 +324,7 @@ class InternationalStandardBookNumber {
    * @returns {{ groupCode: any; publishCode: any; bookCode: any; checkCode: any; }}
    */
   #parseOldVersion() {
-    const isbn = this.isbn;
+    const isbn = this.#isbn;
 
     const { groupCode, publishCode, bookCode } = this.#parseGroupPublishBookCode(isbn.slice(0, -1));
     const checkCode = isbn.slice(-1);
@@ -291,7 +344,7 @@ class InternationalStandardBookNumber {
    * @returns {{ prefixCode: any; groupCode: any; publishCode: any; bookCode: any; checkCode: any; }}
    */
   #parseCurrentVersion() {
-    const isbn = this.isbn;
+    const isbn = this.#isbn;
     const prefixCode = isbn.slice(0, 3);
     const { groupCode, publishCode, bookCode } = this.#parseGroupPublishBookCode(isbn.slice(3, -1));
     const checkCode = isbn.slice(-1);
@@ -405,19 +458,19 @@ class InternationalStandardBookNumber {
    * @returns {this}
    */
   fakeOldVersion(){
-    const prefixCode = ''
+    this.#prefixCode = null
 
-    const groupCode = InternationalStandardBookNumber.groupCode
+    this.#groupCode = InternationalStandardBookNumber.GROUP_CODE
     
-    const publishCode = this.#fakePublishCode()
+    this.#publishCode = this.#fakePublishCode()
     
-    const bookCodeLength = InternationalStandardBookNumber.publicBookLength - publishCode.length
-    const bookCode = this.#fakeBookCode(bookCodeLength)
+    const bookCodeLength = InternationalStandardBookNumber.PUBLISH_BOOK_LENGTH - this.#publishCode.length
+    this.#bookCode = this.#fakeBookCode(bookCodeLength)
     
-    const waitParseIsbn = prefixCode + groupCode + publishCode + bookCode
-    const checkCode = this.oldVersionCheckCode(waitParseIsbn)
+    const waitParseIsbn = this.#groupCode + this.#publishCode + this.#bookCode
+    this.#checkCode = this.#oldVersionCheckCode(waitParseIsbn)
     
-    this.isbn = waitParseIsbn + checkCode
+    this.#isbn = waitParseIsbn + this.#checkCode
 
     return this
   }
@@ -429,19 +482,19 @@ class InternationalStandardBookNumber {
    * @returns {this}
    */
   fakeCurrentVersion(){
-    const prefixCode = common.arrayRandom([this.prefixCode978, this.prefixCode979])
+    this.#prefixCode = common.arrayRandom([InternationalStandardBookNumber.PRIFIX_CODE_978, InternationalStandardBookNumber.PRIFIX_CODE_979])
 
-    const groupCode = InternationalStandardBookNumber.groupCode
+    this.#groupCode = InternationalStandardBookNumber.GROUP_CODE
     
-    const publishCode = this.#fakePublishCode()
+    this.#publishCode = this.#fakePublishCode()
     
-    const bookCodeLength = InternationalStandardBookNumber.publicBookLength - publishCode.length
-    const bookCode = this.#fakeBookCode(bookCodeLength)
+    const bookCodeLength = InternationalStandardBookNumber.PUBLISH_BOOK_LENGTH - this.#publishCode.length
+    this.#bookCode = this.#fakeBookCode(bookCodeLength)
     
-    const waitParseIsbn = prefixCode + groupCode + publishCode + bookCode
-    const checkCode = this.currentVersionCheckCode(waitParseIsbn)
+    const waitParseIsbn = this.#prefixCode + this.#groupCode + this.#publishCode + this.#bookCode
+    this.#checkCode = this.#currentVersionCheckCode(waitParseIsbn)
     
-    this.isbn = waitParseIsbn + checkCode
+    this.#isbn = waitParseIsbn + this.#checkCode
 
     return this
   }

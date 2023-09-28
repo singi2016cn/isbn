@@ -1,5 +1,8 @@
 import isbn from '../src/isbn.js';
-import common from '../src/util/common.js'
+
+test('978-7-502-4734-5 is valid', () => {
+  expect((new isbn('978-7-502-4734-5')).isValid()).toBe(false);
+});
 
 test('978-7-5502-4734-5 is valid', () => {
   expect((new isbn('978-7-5502-4734-5')).isValid()).toBe(true);
@@ -34,7 +37,7 @@ test('7302122601 to new is 9787302122609', () => {
 });
 
 test('7302122601 to new is 9797302122608', () => {
-  expect((new isbn('7302122601')).oldToCurrentVersion(isbn.prefixCode979)).toBe('9797302122608');
+  expect((new isbn('7302122601')).oldToCurrentVersion(isbn.PRIFIX_CODE_979)).toBe('9797302122608');
 });
 
 test('9787302122609 to old is 7302122601', () => {
