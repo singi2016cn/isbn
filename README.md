@@ -13,9 +13,10 @@
 npm i international-standard-book-number
 ```
 
-## 简单用法
+## 国际标准书号（International Standard Book Number）
+### 简单用法
 ```js
-import Isbn from "international-standard-book-number"
+import { Isbn } from "international-standard-book-number"
 
 try {
   const isbn = new Isbn('9787559602176')
@@ -50,10 +51,10 @@ try {
 ```
 
 
-## 生成数据
+### 生成数据
 
 ```javascript
-import Isbn from "international-standard-book-number"
+import { Isbn } from "international-standard-book-number"
 
 const isbn = new Isbn()
 
@@ -115,6 +116,33 @@ for (let i = 0; i < 10; i++) {
 7-315-51583-6
 7-5992-8693-4
 7-234-66128-X
+*/
+```
+
+## 中国标准书号（China Standard Book Number）
+
+```javascript
+import { Csbn } from "international-standard-book-number"
+
+const csbn = new Csbn()
+
+// 随机生成10个数据
+for (let i = 0; i < 10; i++) {
+  const csbnFakeSeparator = csbn.fake()
+  console.log(csbnFakeSeparator)
+}
+
+/* 
+7-2226-6779-2/TL·2923
+7-325-35936-5/TL·2106
+7-89871-931-X/A·4204
+7-7417-4539-5/TF·7996
+7-195-18913-9/TJ·6532
+7-145-65785-6/TB·103
+7-494-39635-7/TE·4488
+7-64468-663-0/T·7169
+7-6216-8848-3/R·6344
+7-19788-326-1/V·2290
 */
 ```
 

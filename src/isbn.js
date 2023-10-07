@@ -27,6 +27,16 @@ class InternationalStandardBookNumber {
 
   #isValid = false
 
+  effectiveDate = '2007-01-01'
+  endDate = null
+
+  /**
+   * Creates an instance of InternationalStandardBookNumber.
+   * @date 2023/10/7 - 15:53:01
+   *
+   * @constructor
+   * @param {*} [isbn=null]
+   */
   constructor(isbn = null) {
     if (isbn !== null) {
       this.#isbnInput = isbn
@@ -420,7 +430,8 @@ class InternationalStandardBookNumber {
       /^[1-4][0-9][0-9]/g,
       /^[5-7][0-9][0-9][0-9]/g,
       /^8[0-9][0-9][0-9][0-9]/g,
-      /^9[0-9][0-9][0-9][0-9][0-9]/g,
+      /^9[0-8][0-9][0-9][0-9][0-9]/g,
+      /^99[0-9][0-9][0-9][0-9][0-9]/g,
     ];
     for (let i = 0; i < publishCodeRegexs.length; i++) {
       const publishCodeRegexMatch = waitParseIsbn.match(publishCodeRegexs[i]);

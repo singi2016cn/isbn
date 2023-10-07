@@ -1,3 +1,4 @@
 import Isbn from "./src/isbn.js";
+import Csbn from "./src/csbn.js";
 
-export default Isbn
+export { Isbn, Csbn }

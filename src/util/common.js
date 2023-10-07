@@ -26,7 +26,7 @@ function arrayRandom(arr){
 }
 
 /**
- * 返回随机数，每一位都是按照规则随机的
+ * 返回随机数，每一位的值都是按照规则随机的
  * @date 2023/9/26 - 16:44:48
  *
  * @param {*} startEndArr
